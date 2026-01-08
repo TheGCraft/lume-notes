@@ -33,8 +33,8 @@ app.use("/api/notes", noteRoutes);
 if (process.env.NODE_ENV === "production") {
     app.use(express.static(frontendPath));
     //Handle all routes to index.html
-    app.get('/:path*', (req, res) => {
-        res.sendFile(path.join(frontendPath, 'index.html'));
+    app.get('/:path(.*)', (req, res) => {
+        res.sendFile(path.join(__dirname, '../../frontend/dist/index.html'));
     });
 }
 
@@ -43,7 +43,7 @@ app.use((req, res, next) => {
     next();
 })
 // Health Check
-app.get(('(.*)', (req, res) => res.send("Server is up and running!")));
+app.get('/:path(.*)', (req, res) => res.send("Server is up and running!"));
 
 // The Startup Function
 const startServer = async () => {
