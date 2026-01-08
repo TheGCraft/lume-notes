@@ -9,9 +9,8 @@ import rateLimiter from "./middleware/rateLimiter.js";
 dotenv.config();
 
 const app = express();
-const PORT = 5005;
+const PORT = process.env.PORT || 5005;
 const __dirname = path.resolve();
-const frontendPath = path.join(__dirname, '../../frontend/dist');
 
 // Middleware to parse JSON
 app.use(express.json());
@@ -31,28 +30,32 @@ app.use("/api/notes", noteRoutes);
 
 //Static Files for production
 if (process.env.NODE_ENV === "production") {
+    const frontendPath = path.join(__dirname, "frontend", "dist");
     app.use(express.static(frontendPath));
     //Handle all routes to index.html
-    app.get('/:path(.*)', (req, res) => {
-        res.sendFile(path.join(__dirname, '../../frontend/dist/index.html'));
+    app.get("*", (req, res) => {
+        res.sendFile(path.join(frontendPath, "index.html"));
     });
+
+
+    app.use((req, res, next) => {
+        console.log(`${req.method} ${req.url}`);
+        next();
+    })
+} else {
+    // Health Check for local development (moved here so it doesn't clash with production)
+    app.get("/health", (req, res) => res.send("Server is up and running!"));
 }
 
-app.use((req, res, next) => {
-    console.log(`${req.method} ${req.url}`);
-    next();
-})
-// Health Check
-app.get('/:path(.*)', (req, res) => res.send("Server is up and running!"));
 
 // The Startup Function
 const startServer = async () => {
     try {
-        // 1. Connect to Database FIRST
+        // Connect to Database
         await connectDB();
         console.log("✅ MongoDB connected successfully");
 
-        // 2. ONLY start listening once DB is confirmed
+        // Start listening once DB is confirmed
         app.listen(PORT, "0.0.0.0", () => {
             console.log(`🚀 Server ready at http://127.0.0.1:${PORT}`);
         });
