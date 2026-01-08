@@ -28,25 +28,17 @@ app.use(rateLimiter);
 // Routes
 app.use("/api/notes", noteRoutes);
 
-//Static Files for production
+// Static Files for production
 if (process.env.NODE_ENV === "production") {
     const frontendPath = path.join(__dirname, "frontend", "dist");
     app.use(express.static(frontendPath));
-    //Handle all routes to index.html
-    app.get("*", (req, res) => {
+
+    app.get(/^(?!\/api).+/, (req, res) => {
         res.sendFile(path.join(frontendPath, "index.html"));
     });
-
-
-    app.use((req, res, next) => {
-        console.log(`${req.method} ${req.url}`);
-        next();
-    })
 } else {
-    // Health Check for local development (moved here so it doesn't clash with production)
-    app.get("/health", (req, res) => res.send("Server is up and running!"));
+    app.get('/health', (req, res) => res.send("Server is up and running!"));
 }
-
 
 // The Startup Function
 const startServer = async () => {
