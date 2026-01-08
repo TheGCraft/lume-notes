@@ -11,6 +11,7 @@ Lume Notes is a modern, full-stack note-taking application designed to help you 
 Check out the live version of Lume Notes hosted on Render:  
 **[Link](https://lume-notes.onrender.com)**
 ** Since it is a free service, it may take a few minutes to start up. Please be patient.**
+** The URL is https://lume-notes.onrender.com**
 
 ## 📸 Screenshots
 ![Initial Screen](./screenshots/lume-01.png)
