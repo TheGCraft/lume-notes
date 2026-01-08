@@ -11,7 +11,7 @@ dotenv.config();
 const app = express();
 const PORT = 5005;
 const __dirname = path.resolve();
-
+const frontendPath = path.join(__dirname, '../../frontend/dist');
 
 // Middleware to parse JSON
 app.use(express.json());
@@ -31,11 +31,10 @@ app.use("/api/notes", noteRoutes);
 
 //Static Files for production
 if (process.env.NODE_ENV === "production") {
-    app.use(express.static(path.join(__dirname, "../frontend/dist")));
+    app.use(express.static(frontendPath));
     //Handle all routes to index.html
-    app.get('(.*)', (req, res) => {
-        res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
-
+    app.get('/:path*', (req, res) => {
+        res.sendFile(path.join(frontendPath, 'index.html'));
     });
 }
 
